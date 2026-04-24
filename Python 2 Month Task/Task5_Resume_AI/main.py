@@ -48,7 +48,7 @@ df = df.sort_values(by="Score", ascending=False)
 # Save report
 df.to_csv("final_results.csv", index=False)
 
-print("\n📄 Ranking:\n")
+print("\nRanking:\n")
 print(df)
 
-print("\n🏆 Best Candidate:", df.iloc[0]["Resume"])
+print("\nBest Candidate:", df.iloc[0]["Resume"])
