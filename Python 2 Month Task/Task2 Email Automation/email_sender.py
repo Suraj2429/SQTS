@@ -3,7 +3,7 @@ import pandas as pd
 from email.message import EmailMessage
 
 EMAIL = "surajp7275@gmail.com"
-PASSWORD = "lata bdxi ooyr robc"
+PASSWORD = "uizh eutg hsyq xgfw"
 
 # READ CSV
 data = pd.read_csv("data.csv")  

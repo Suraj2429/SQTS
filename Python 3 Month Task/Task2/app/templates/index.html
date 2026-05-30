@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Career Guidance Bot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        AI Career Guidance Assistant
+    </div>
+
+    <div id="chat-box" class="chat-box">
+
+        <div class="bot-message">
+            Welcome! Ask me about internships, DevOps, Python, Data Science or careers.
+        </div>
+
+    </div>
+
+    <div id="typing" class="typing hidden">
+        Bot is typing...
+    </div>
+
+    <div class="input-area">
+
+        <input
+            type="text"
+            id="user-input"
+            placeholder="Type your message..."
+        >
+
+        <button onclick="sendMessage()">
+            Send
+        </button>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

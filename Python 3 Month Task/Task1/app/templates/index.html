@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Career Chatbot</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+            AI Career Guidance Bot
+        </div>
+
+        <div id="chat-box" class="chat-box">
+
+            <div class="bot-message">
+                Hello! Ask me about internships, careers, or projects.
+            </div>
+
+        </div>
+
+        <div
+            id="typing"
+            class="typing hidden"
+        >
+
+            <div class="spinner"></div>
+
+            <span>Bot is typing...</span>
+
+        </div>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="user-input"
+                placeholder="Type your question..."
+            >
+
+            <button type="button" onclick="sendMessage()">
+                Send
+            </button>
+
+            <button type="button" onclick="showLeadForm()">
+                Career Form
+            </button>
+
+        </div>
+
+        <div id="lead-form-container" class="hidden">
+
+            <h2>
+                Career Guidance Form
+            </h2>
+
+            <form id="lead-form">
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Your Name"
+                    required
+                >
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Your Email"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="interest"
+                    placeholder="Interested Field"
+                    required
+                >
+
+                <button type="submit">
+                    Submit
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div
+        id="success-popup"
+        class="popup hidden"
+    >
+        Guidance form submitted successfully!
+    </div>
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>
