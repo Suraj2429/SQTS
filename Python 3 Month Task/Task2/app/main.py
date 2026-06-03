@@ -5,7 +5,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from .database import engine, SessionLocal
-from .models import Base, Lead, ChatLog
+from .models import Base, Lead, ChatLog, FAQ
+from .ai_service import get_ai_response
 from .recommendations import career_recommendations
 from .session_manager import conversation_state
 
@@ -28,40 +29,25 @@ def home(request: Request):
 
 @app.get("/chat")
 def chat(query: str):
+    user_message = query.lower().strip()
 
-    user_message = query.lower()
+    # Reset conversation
 
-    if "python internship" in user_message:
-        conversation_state["interest"] = "Python Internship"
-        conversation_state["step"] = "education"
+    if user_message in [
+        "reset",
+        "cancel",
+        "new chat",
+        "start over"
+    ]:
 
-        return {
-            "response":"What is your education? (BCA / MCA / BTech / Other)"
-        }
-
-    if "devops" in user_message:
-        conversation_state["interest"] = "DevOps"
-        conversation_state["step"] = "education"
+        conversation_state.clear()
 
         return {
-            "response":"What is your education? (BCA / MCA / BTech / Other)"
+            "response":
+            "Conversation reset successfully. How can I help you today?"
         }
 
-    if "data science" in user_message:
-        conversation_state["interest"] = "Data Science"
-        conversation_state["step"] = "education"
-
-        return {
-            "response":"What is your education? (BCA / MCA / BTech / Other)"
-        }
-
-    if "no coding" in user_message:
-        conversation_state["interest"] = "Non Coding Career"
-        conversation_state["step"] = "education"
-
-        return {
-            "response":"What is your education? (Any Degree)"
-        }
+    # Continue Lead Flow
 
     if conversation_state.get("step") == "education":
 
@@ -69,7 +55,8 @@ def chat(query: str):
         conversation_state["step"] = "skill"
 
         return {
-            "response":"What is your skill level? (Beginner / Intermediate / Advanced)"
+            "response":
+            "What is your skill level? (Beginner / Intermediate / Advanced)"
         }
 
     if conversation_state.get("step") == "skill":
@@ -78,7 +65,8 @@ def chat(query: str):
         conversation_state["step"] = "name"
 
         return {
-            "response":"Please enter your full name."
+            "response":
+            "Please enter your full name."
         }
 
     if conversation_state.get("step") == "name":
@@ -87,7 +75,8 @@ def chat(query: str):
         conversation_state["step"] = "email"
 
         return {
-            "response":"Please enter your email."
+            "response":
+            "Please enter your email."
         }
 
     if conversation_state.get("step") == "email":
@@ -117,23 +106,94 @@ def chat(query: str):
         db.close()
 
         interest = conversation_state["interest"]
+        skill = conversation_state["skill"].lower()
 
-        roadmap = career_recommendations.get(
-            interest.lower(),
-            "Recommendation not found."
-        )
+        if interest == "Python":
+
+            if skill == "beginner":
+                roadmap = career_recommendations["python_beginner"]
+
+            elif skill == "intermediate":
+                roadmap = career_recommendations["python_intermediate"]
+
+            else:
+                roadmap = career_recommendations["python_advanced"]
+
+        elif interest == "Java":
+
+            roadmap = career_recommendations["java"]
+
+        elif interest == "Data Analytics":
+
+            roadmap = career_recommendations["data_analytics"]
+
+        elif interest == "Web Development":
+
+            roadmap = career_recommendations["web_development"]
+
+        else:
+
+            roadmap = "Roadmap not available."
 
         conversation_state.clear()
 
         return {
-            "response":"Lead saved successfully.\n\n" + roadmap
+            "response":
+            "Lead saved successfully.\n\n" + roadmap
         }
 
-    return {
-        "response":"Please ask about Python Internship, DevOps, Data Science or Non Coding Careers."
+    # Start Lead Flow ONLY from Buttons
+
+    domains = {
+        "python": "Python",
+        "java": "Java",
+        "data analytics": "Data Analytics",
+        "web development": "Web Development"
     }
 
+    if user_message in domains:
 
+        conversation_state.clear()
+
+        conversation_state["interest"] = domains[user_message]
+        conversation_state["step"] = "education"
+
+        return {
+            "response":
+            f"You selected {domains[user_message]}.\n\n"
+            "What is your education? (BCA / MCA / BTech / Other)"
+        }
+
+    # FAQ Search
+
+    db = SessionLocal()
+
+    faqs = db.query(FAQ).all()
+
+    for faq in faqs:
+
+        if (
+            faq.question.lower() in user_message
+            or
+            user_message in faq.question.lower()
+        ):
+
+            db.close()
+
+            return {
+                "response": faq.answer
+            }
+
+    db.close()
+
+    # AI Fallback
+    ai_response = get_ai_response(query)
+
+    return {
+        "response": ai_response
+    }
+
+ 
 @app.get("/leads")
 def get_leads():
 
@@ -194,6 +254,25 @@ def admin():
     total_leads = db.query(Lead).count()
 
     total_chats = db.query(ChatLog).count()
+
+    logs = db.query(ChatLog).all()
+
+    topic_count = {}
+
+    for log in logs:
+
+        topic_count[log.question] = (
+            topic_count.get(log.question,0) + 1
+        )
+
+    most_asked = "No Data"
+
+    if topic_count:
+
+        most_asked = max(
+            topic_count,
+            key=topic_count.get
+        )
 
     success_ratio = 0
 
@@ -286,6 +365,11 @@ def admin():
         <div class="card">
             <h2>{success_ratio}%</h2>
             <p>Success Ratio</p>
+        </div>
+
+        <div class="card">
+            <h2>{most_asked}</h2>
+            <p>Most Asked Topic</p>
         </div>
 
     </div>

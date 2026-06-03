@@ -19,6 +19,7 @@ class FAQ(Base):
     id=Column(Integer,primary_key=True,index=True)
     question=Column(String)
     answer=Column(String)
+    category=Column(String)
 
 class ChatLog(Base):
     __tablename__="chat_logs"

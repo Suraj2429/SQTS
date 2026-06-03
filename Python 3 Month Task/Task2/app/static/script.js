@@ -1,69 +1,73 @@
-const chatBox=document.getElementById("chat-box");
-const input=document.getElementById("user-input");
-const typing=document.getElementById("typing");
+window.onload = function(){
 
-async function sendMessage(){
+    const chatBox = document.getElementById("chat-box");
+    const input = document.getElementById("user-input");
+    const typing = document.getElementById("typing");
 
-    const message=input.value.trim();
+    window.sendMessage = async function(){
 
-    if(message==="") return;
+        const message = input.value.trim();
 
-    addMessage(message,"user-message");
+        if(message === ""){
+            return;
+        }
 
-    input.value="";
+        addMessage(message, "user-message");
 
-    typing.classList.remove("hidden");
+        input.value = "";
 
-    autoScroll();
+        typing.classList.remove("hidden");
 
-    try{
+        try{
 
-        const response=await fetch(
-            `/chat?query=${encodeURIComponent(message)}`
-        );
+            const response = await fetch(
+                `/chat?query=${encodeURIComponent(message)}`
+            );
 
-        const data=await response.json();
+            const data = await response.json();
 
-        typing.classList.add("hidden");
+            typing.classList.add("hidden");
 
-        addMessage(data.response,"bot-message");
+            addMessage(
+                data.response,
+                "bot-message"
+            );
 
-    }
-    catch(error){
+        }catch(error){
 
-        typing.classList.add("hidden");
+            typing.classList.add("hidden");
 
-        addMessage(
-            "Something went wrong.",
-            "bot-message"
-        );
-    }
+            addMessage(
+                "Something went wrong.",
+                "bot-message"
+            );
+        }
+    };
 
-    autoScroll();
-}
+    window.sendPreset = function(message){
 
-function addMessage(message,className){
-
-    const div=document.createElement("div");
-
-    div.className=className;
-
-    div.innerHTML=message.replace(/\n/g,"<br>");
-
-    chatBox.appendChild(div);
-
-    autoScroll();
-}
-
-function autoScroll(){
-
-    chatBox.scrollTop=chatBox.scrollHeight;
-}
-
-input.addEventListener("keypress",function(event){
-
-    if(event.key==="Enter"){
+        input.value = message;
 
         sendMessage();
+    };
+
+    function addMessage(message, className){
+
+        const div = document.createElement("div");
+
+        div.className = className;
+
+        div.innerHTML = message.replace(/\n/g,"<br>");
+
+        chatBox.appendChild(div);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
-});
+
+    input.addEventListener("keypress", function(event){
+
+        if(event.key === "Enter"){
+            sendMessage();
+        }
+    });
+};

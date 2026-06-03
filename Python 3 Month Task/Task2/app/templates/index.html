@@ -1,42 +1,83 @@
 <!DOCTYPE html>
+
 <html>
 <head>
     <title>AI Career Guidance Bot</title>
-    <link rel="stylesheet" href="/static/style.css">
+
+<link rel="stylesheet" href="/static/style.css">
+
 </head>
+
 <body>
 
 <div class="container">
 
-    <div class="header">
-        AI Career Guidance Assistant
+<div class="header">
+    AI Career Guidance Assistant
+</div>
+
+<div class="domain-section">
+
+    <div class="domain-title">
+        Select Your Interested Internship Domain
     </div>
 
-    <div id="chat-box" class="chat-box">
+    <div class="quick-actions">
 
-        <div class="bot-message">
-            Welcome! Ask me about internships, DevOps, Python, Data Science or careers.
-        </div>
+        <button onclick="sendPreset('Python')">
+            Python
+        </button>
 
-    </div>
+        <button onclick="sendPreset('Java')">
+            Java
+        </button>
 
-    <div id="typing" class="typing hidden">
-        Bot is typing...
-    </div>
+        <button onclick="sendPreset('Data Analytics')">
+            Data Analytics
+        </button>
 
-    <div class="input-area">
-
-        <input
-            type="text"
-            id="user-input"
-            placeholder="Type your message..."
-        >
-
-        <button onclick="sendMessage()">
-            Send
+        <button onclick="sendPreset('Web Development')">
+            Web Development
         </button>
 
     </div>
+
+</div>
+
+<div id="chat-box" class="chat-box">
+
+    <div class="bot-message">
+        Welcome to AI Career Guidance Assistant
+        <br>
+        ## Choose a domain above to get a personalized internship roadmap.
+        <br>
+        # You can also ask:
+        <br>• What is Java?
+        <br>• How to become a Java Developer?
+        <br>• Data Analytics Career Path
+        <br>• Web Development Roadmap
+
+        </div>
+
+</div>
+
+<div id="typing" class="typing hidden">
+    Bot is typing...
+</div>
+
+<div class="input-area">
+
+    <input
+        type="text"
+        id="user-input"
+        placeholder="Type your message..."
+    >
+
+    <button onclick="sendMessage()">
+        Send
+    </button>
+
+</div>
 
 </div>
 
